@@ -1,7 +1,5 @@
 package com.example.patron
 
-import android.app.Activity
-import android.app.Instrumentation.ActivityResult
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -28,9 +26,7 @@ class SignUpActivity : AppCompatActivity() {
 
         uri?.let {
             uploadImage(uri, USER_PROFILE_FOLDER) {
-                if (it == null) {
-
-                } else {
+                if (it != null) {
                     user.image = it
                     binding.profileImage.setImageURI(uri)
                 }
