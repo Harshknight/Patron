@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "488446754404",
+    "project_id": "patron-5b5aa",
+    "storage_bucket": "patron-5b5aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488446754404:android:41e1a3a6237661d6cc6971",
+        "android_client_info": {
+          "package_name": "com.example.patron"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB31Oz2oGGUFqxGTB9KUrOBbtX29wwmJ6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
