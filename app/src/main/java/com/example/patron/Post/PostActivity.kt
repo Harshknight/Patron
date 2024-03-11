@@ -1,18 +1,23 @@
 package com.example.patron.Post
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.patron.HomeActivity
 import com.example.patron.Model.Post
+import com.example.patron.Model.User
 
 import com.example.patron.databinding.ActivityPostBinding
 import com.example.patron.utils.POST
 import com.example.patron.utils.POST_FOLDER
+import com.example.patron.utils.USER_NODE
 import com.example.patron.utils.USER_PROFILE_FOLDER
 import com.example.patron.utils.uploadImage
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 
 class PostActivity : AppCompatActivity() {
     private lateinit var binding :ActivityPostBinding
@@ -43,6 +48,7 @@ class PostActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
         binding.materialToolbar.setNavigationOnClickListener {
+            startActivity(Intent(this@PostActivity,HomeActivity::class.java))
             finish()
         }
 
@@ -50,12 +56,23 @@ class PostActivity : AppCompatActivity() {
             launcher.launch("image/*")
         }
 
-        binding.postButton.setOnClickListener {
-            val post: Post = Post(imageUrl!!,binding.caption.editText?.text.toString())
+        binding.cancelButton.setOnClickListener {
+            startActivity(Intent(this@PostActivity,HomeActivity::class.java))
+            finish()
+        }
 
-            Firebase.firestore.collection(POST).document().set(post).addOnSuccessListener {
-                Firebase.firestore.collection(Firebase.auth.currentUser!!.uid).document().set(post).addOnSuccessListener {
-                    finish()
+        binding.postButton.setOnClickListener {
+            Firebase.firestore.collection(USER_NODE).document(Firebase.auth.currentUser!!.uid).get().addOnSuccessListener {
+                val user = it.toObject<User>()!!
+
+                val post: Post = Post(postUrl = imageUrl!!, caption = binding.caption.editText?.text.toString(),uid=Firebase.auth.currentUser!!.uid,time =System.currentTimeMillis().toString())
+
+                Firebase.firestore.collection(POST).document().set(post).addOnSuccessListener {
+                    Firebase.firestore.collection(Firebase.auth.currentUser!!.uid).document()
+                        .set(post).addOnSuccessListener {
+                        startActivity(Intent(this@PostActivity, HomeActivity::class.java))
+                        finish()
+                    }
                 }
             }
         }
