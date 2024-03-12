@@ -22,6 +22,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var user: User
+    private var isEditMode: Boolean = false
     val launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 
         uri?.let {
@@ -32,6 +33,20 @@ class SignUpActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun updateUserProfile() {
+        user.name = binding.name.editText?.text.toString()
+        user.password = binding.password.editText?.text.toString()
+        user.email = binding.email.editText?.text.toString()
+
+        Firebase.firestore.collection(USER_NODE)
+            .document(Firebase.auth.currentUser!!.uid)
+            .set(user)
+            .addOnSuccessListener {
+                startActivity(Intent(this, HomeActivity::class.java))
+                finish()
+            }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,28 +61,38 @@ class SignUpActivity : AppCompatActivity() {
 
         if (intent.hasExtra("MODE")) {
             if (intent.getIntExtra("MODE", -1) == 1) {
+                isEditMode = true
                 binding.signup.text = "Update Profile"
                 Firebase.firestore.collection(USER_NODE).document(Firebase.auth.currentUser!!.uid)
-                    .get().addOnSuccessListener {
-                    val user: User = it.toObject<User>()!!
+                    .get().addOnSuccessListener { document ->
+                        val currentUser: User? = document.toObject<User>()
 
-                    if (!user.image.isNullOrEmpty()) {
-                        Picasso.get().load(user.image).into(binding.profileImage)
+                        // Update UI with existing user data
+                        currentUser?.let {
+                            if (!it.image.isNullOrEmpty()) {
+                                Picasso.get().load(it.image).into(binding.profileImage)
+                            }
+                            binding.name.editText?.setText(it.name)
+                            binding.email.editText?.setText(it.email)
+                            binding.password.editText?.setText(it.password)
+                        }
                     }
-                        binding.name.editText?.setText(user.name)
-                        binding.email.editText?.setText(user.email)
-                        binding.password.editText?.setText(user.password)
-                }
             }
         }
         binding.signup.setOnClickListener {
-            if (intent.hasExtra("MODE")) {
-                if (intent.getIntExtra("MODE", -1) == 1) {
+            if (isEditMode) {
+                // If in edit mode, update only the profile image if changed
+                if (user.image != null) {
                     Firebase.firestore.collection(USER_NODE)
-                        .document(Firebase.auth.currentUser!!.uid).set(user).addOnSuccessListener {
+                        .document(Firebase.auth.currentUser!!.uid)
+                        .update("image", user.image)
+                        .addOnSuccessListener {
                             startActivity(Intent(this, HomeActivity::class.java))
                             finish()
                         }
+                } else {
+                    // Handle other profile updates
+                    updateUserProfile()
                 }
             }
             else{

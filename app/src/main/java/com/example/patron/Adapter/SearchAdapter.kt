@@ -29,8 +29,8 @@ class SearchAdapter(var context:Context,var userList:ArrayList<User>):RecyclerVi
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var isFollow = false
-       Glide.with(context).load(userList.get(position).image).placeholder(R.drawable.user).into(holder.binding.profileImage)
-        holder.binding.name.text = userList.get(position).name
+       Glide.with(context).load(userList[position].image).placeholder(R.drawable.user).into(holder.binding.profileImage)
+        holder.binding.name.text = userList[position].name
 
         Firebase.firestore.collection(Firebase.auth.currentUser!!.uid+ FOLLOW).whereEqualTo("email",userList.get(position).email).get().addOnSuccessListener {
             if (it.documents.size==0){

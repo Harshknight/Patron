@@ -17,7 +17,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 
 
-class PostAdapter(var context: Context, var postList: ArrayList<Post>):RecyclerView.Adapter<PostAdapter.MyHolder>() {
+class PostAdapter(var context: Context, var postList: ArrayList<Post>, var isLiked: Boolean =false):RecyclerView.Adapter<PostAdapter.MyHolder>() {
 
     inner class MyHolder(var binding:PostRvBinding):RecyclerView.ViewHolder(binding.root)
 
@@ -61,8 +61,22 @@ class PostAdapter(var context: Context, var postList: ArrayList<Post>):RecyclerV
         }
 
         holder.binding.caption.text = postList.get(position).caption
+
+
         holder.binding.like.setOnClickListener {
-            holder.binding.like.setImageResource(R.drawable.heart_1)
+
+            isLiked = false
+            if (isLiked) {
+                // If already liked, change the icon to unlike
+                holder.binding.like.setImageResource(R.drawable.heart)
+                // Set the like state to false (unliked)
+                isLiked = false
+            } else {
+                // If not liked, change the icon to like
+                holder.binding.like.setImageResource(R.drawable.heart_1)
+                // Set the like state to true (liked)
+                isLiked = true
+            }
         }
 
     }

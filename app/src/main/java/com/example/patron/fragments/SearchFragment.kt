@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.patron.Adapter.SearchAdapter
 import com.example.patron.Model.User
-import com.example.patron.R
 import com.example.patron.databinding.FragmentSearchBinding
 import com.example.patron.utils.USER_NODE
 import com.google.firebase.Firebase
